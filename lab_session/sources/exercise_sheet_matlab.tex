@@ -1,0 +1,125 @@
+\documentclass[11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}        % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{amsthm,amssymb,amsbsy,amsmath,amsfonts,amssymb,amscd}
+\usepackage{dsfont}
+\usepackage{tasks}
+\usepackage{exsheets}
+\usepackage{enumitem}
+\usepackage[top=2cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+\usepackage{verbatim}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning,calc}
+
+\title{Demand Forecasting -- Lab session}
+\author{Mines Saint-\'Etienne, master GI,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+
+\SetupExSheets{question/print=true}
+\SetupExSheets{solution/print=false}
+
+\maketitle
+
+\paragraph{}
+The aim of the lab session is to perform and compare various forecasts for various time series. The methods described during the class are already implemented in Matlab. The datasets \verb!data1.mat!, \dots, \verb!data4.mat! and the m-files can be found in the file \verb!functions_matlab.zip!. After unzipping this folder, choose it as your working directory.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 1: }
+Each dataset contains two vectors: \texttt{T} for the timepoints and \texttt{Y} for the time series. Load the various data sets using the command \texttt{load('data1.mat')} and plot the time series. For each one, can you recognize some of the features we have seen during the class?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 2: }
+For each method (see below), try various parameters configuration in order to get an insight on their influence.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 3: }
+Write a function that computes the Mean Square Error of the prediction.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 4: }
+For each dataset, find a well suited method (of combination of method) with appropriate parameters values. Compute the MSE and plot the residuals to see if any pattern can be distinguished.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Description of the implemented forecasting methods}
+Let \verb!T! denote the vector of time points where we have observations and \verb!Y! be the vector of observed values.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Moving average} \verb!moving_average(T,Y,l)!\\
+\begin{tabular}{rl}
+	Arguments & \verb!l! length of the window (oriented toward the past)\\ \vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+l = 2;
+[Tpred,Ypred] = moving_average(T,Y,l);
+plot(Tpred,Ypred,'*');
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Weighted moving average} \verb!weighted_moving_average(T,Y,l)!\\
+\begin{tabular}{rl}
+	Arguments & \verb!w! vector of weights\\ \vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+w = [0.1,0.5,1,2];
+[Tpred,Ypred] = weighted_moving_average(T,Y,w);
+plot(Tpred,Ypred,'o');
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Exponential smoothing:} \verb!exponential_smoothing(T,Y,alpha)!\\
+\begin{tabular}{rl}
+	Arguments & \verb!alpha! is the smoothing parameter\\ \vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+alpha = 0.7;
+[Tpred,Ypred] = exponential_smoothing(T,Y,alpha);
+plot(Tpred,Ypred,'x');
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Linear regression:} \verb!linear_regression(Tpred,T,Y)!\\
+\vspace{3mm}
+\begin{tabular}{rl}
+	Arguments & 
+	\begin{minipage}{10cm}
+	\verb!Tpred! is the vector of prediction points\\
+	\end{minipage}
+	\\\vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+n = length(T);
+Tpred = vertcat(T,2*T(n)-T(n-1));
+[Tpred,Ypred] = linear_regression(Tpred,T,Y);
+plot(Tpred,Ypred,'.');
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+As it is, the basis functions correspond to a constant and a linear function. Feel free to modify the m-file to add new ones!\\
+
+\end{document}
