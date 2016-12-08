@@ -1,0 +1,132 @@
+\documentclass[11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}        % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{amsthm,amssymb,amsbsy,amsmath,amsfonts,amssymb,amscd}
+\usepackage{dsfont}
+\usepackage{tasks}
+\usepackage{exsheets}
+\usepackage{enumitem}
+\usepackage[top=2cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+\usepackage{verbatim}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning,calc}
+
+\title{Demand Forecasting -- Lab session}
+\author{Mines Saint-\'Etienne, master GI,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+
+\SetupExSheets{question/print=true}
+\SetupExSheets{solution/print=false}
+
+\maketitle
+
+\paragraph{}
+The aim of the lab session is to perform and compare various forecast for the time series given in the files \verb!data1.RData!, \dots, \verb!data4.RData!. The methods described during the class are already implemented in the file \verb!functions.R!. All these documents can be found in the file \verb!functions_R.zip!. After unzipping this folder, choose it as your working directory.
+
+\paragraph{}
+The first data set can be loaded with the command \verb!load("data1.RData")!. In order to use the methods already implemented you should run the command \texttt{source(" functions.R")}. Do not forget to set your working directory in the first place.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 1: }
+First of all, you can load the various data sets and plot the time series. For each one, can you recognize some of the features we have seen during the class?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 2: }
+For each method (see below), try various parameters configuration in order to get an insight on their influence.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 3: }
+Write a function that computes the Mean Square Error of the prediction.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Question 4: }
+For each dataset, find a well suited method (of combination of method) with appropriate parameters values. Compute the MSE on the last 10 points and plot the residuals to see if any pattern can be distinguished.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Description of the implemented forecasting methods}
+Let \verb!T! denote the vector of time points where we have observations and \verb!Y! be the vector of observed values. In the examples bellow we assume that the file \verb!functions.R! has been sourced and that \verb!data1.RData! has been loaded.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Moving average} \verb!moving_average(T,Y,l)!\\
+\begin{tabular}{rl}
+	Arguments & \verb!l! length of the window (oriented toward the past)\\ \vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+l <- 4
+pred <- moving_average(T,Y,l)
+plot(T,Y,xlim=c(1950,2025),ylim=c(480,520))
+lines(pred$T,pred$Y,col="blue")
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Weighted moving average} \verb!weighted_moving_average(T,Y,l)!\\
+\begin{tabular}{rl}
+	Arguments & \verb!w! vector of weights\\ \vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+w <- c(0.1,0.4,0.8,1.6,3.2)
+pred <- weighted_moving_average(T,Y,w)
+plot(T,Y,xlim=c(1950,2025),ylim=c(480,520))
+lines(pred$T,pred$Y,col="red")
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Exponential smoothing:} \verb!exponential_smoothing(T,Y,alpha)!\\
+\begin{tabular}{rl}
+	Arguments & \verb!alpha! is the smoothing parameter\\ \vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+alpha <- 0.5
+pred <- exponential_smoothing(T,Y,alpha)
+plot(T,Y,xlim=c(1950,2025),ylim=c(480,520))
+lines(pred$T,pred$Y,col="green")
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Linear regression:} \verb!linear_regression(Tpred,T,Y,B)!\\
+\vspace{3mm}
+\begin{tabular}{rl}
+	Arguments & 
+	\begin{minipage}{10cm}
+	\verb!Tpred! is the vector of prediction points\\
+	\verb!B! is the vector of the basis functions \\ 
+	\end{minipage}
+	\\\vspace{4mm}
+	Output & a list containing the prediction locations and the forecast values\\ \vspace{4mm}
+	Example & 
+	\begin{minipage}{10cm}	
+	\begin{verbatim}
+B <- c(b0,b1)
+Tpred <- 1950:2025
+pred <- linear_regression(Tpred,T,Y,B)
+plot(T,Y,xlim=c(1950,2025),ylim=c(480,520))
+lines(pred$T,pred$Y,col="yellow")
+	\end{verbatim}
+	\end{minipage}
+\end{tabular}\\
+Some basis functions are already implemented: \verb!b0!, \verb!b1! and \verb!b2! which correspond respectively to a constant, linear and a quadratic function. Feel free to add new ones!\\
+
+\end{document}
